@@ -1,12 +1,14 @@
 /* definir uma interface Equipa para representar uma equipa */ 
 interface Equipa {
-  nome: string;
+  nome: string,
   titulos: string | string[];
 }
 /* definir uma EquipasComID interface que representa uma equpa mas que tenha uma propriedade 
 id */
 interface EquipasComID extends Equipa {
-  id: number;
+  id: number,
+  nome: string,
+  titulos: string | string[];
 }
 
 // Importar equipas
@@ -23,32 +25,29 @@ import equipas from "./equipas.json";
 3 - Um array de objectos equipa e  e uma função filtro para filtrar o array a retornar
 4 - 
 */
+function procuraEquipa(equipas: string): EquipasComID[];
+function procuraEquipa(equipas: string, filtro: (Equipa: Equipa) => boolean): EquipasComID[];
+
+function procuraEquipa(equipas: Equipa[]): EquipasComID[];
+
+function procuraEquipa(equipas: Equipa[], filtro: (Equipa: Equipa) => boolean): EquipasComID[];
+
+
 function procuraEquipa(
-  input: string | Equipa[],
-  filtro?: (equipa: EquipasComID) => boolean
-): EquipasComID[] {
-  let equipasComID: EquipasComID[];
+  entrada: Equipa[] | string,
+  filtro?: (equipa: Equipa) => boolean
+): EquipasComID[]{
+  const equipas: Equipa[] = typeof entrada === "string" ? JSON.parse(entrada) : entrada;
 
-  // Verificar se a entrada é uma string (JSON)
-  if (typeof input === "string") {
-    const equipasArray: Equipa[] = JSON.parse(input);
-    equipasComID = equipasArray.map((equipa, index) => ({ ...equipa, id: index }));
-  } else {
-    equipasComID = input.map((equipa, index) => ({ ...equipa, id: index }));
-  }
-
-  // Aplicar o filtro, se fornecido
-  if (filtro) {
-    return equipasComID.filter(filtro);
-  }
-
-  return equipasComID;
+  const equipa2 = ( filtro? equipas.filter(filtro) : equipas) 
+  return equipa2.map((equipa)=>({
+    id: equipas.indexOf(equipa),
+    ...equipa
+  }))
 }
 
 // Exemplos de chamadas à função
-console.log(
-  procuraEquipa(JSON.stringify(equipas), ( {nome} ) => nome === "2023")
-);
+
 
 console.log(procuraEquipa(equipas, ( {nome}) => nome === "LEIT"));
 
